@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 
-const SignUp = () => {
+const SignUp = ({ onToggle }) => {
+    // Add username validation state
+    const [usernameError, setUsernameError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
+        username: '',
         fullName: '',
         email: '',
         password: '',
@@ -15,7 +18,22 @@ const SignUp = () => {
         console.log('Form submitted:', formData);
     };
 
+
+
+    // Add validation to handleChange
     const handleChange = (e) => {
+        if (e.target.name === 'username') {
+            // Clear previous error
+            setUsernameError('');
+
+            // Basic username validation
+            if (e.target.value.length < 3) {
+                setUsernameError('Username must be at least 3 characters long');
+            } else if (!/^[a-zA-Z0-9_]+$/.test(e.target.value)) {
+                setUsernameError('Username can only contain letters, numbers, and underscores');
+            }
+        }
+
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
@@ -30,7 +48,7 @@ const SignUp = () => {
                     <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Create your account</h2>
                     <p className="mt-2 text-sm text-gray-600">
                         Already have an account?{' '}
-                        <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+                        <a href="#" onClick={onToggle} className="font-medium text-indigo-600 hover:text-indigo-500">
                             Sign in
                         </a>
                     </p>
@@ -58,6 +76,38 @@ const SignUp = () => {
                                 required
                             />
                         </div>
+                    </div>
+
+                    {/* Username Input */}
+                    <div className="relative">
+                        <label htmlFor="username" className="text-sm font-medium text-gray-700">
+                            Username
+                        </label>
+                        <div className="mt-1 relative rounded-md shadow-sm">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <User className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                                type="text"
+                                name="username"
+                                id="username"
+                                value={formData.username}
+                                onChange={handleChange}
+                                className={`block w-full pl-10 pr-3 py-2 border ${usernameError ? 'border-red-300' : 'border-gray-300'
+                                    } rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 ${usernameError ? 'focus:ring-red-500 focus:border-red-500' : 'focus:ring-indigo-500 focus:border-indigo-500'
+                                    } sm:text-sm`}
+                                placeholder="johnnotfound"
+                                minLength="3"
+                                maxLength="30"
+                                pattern="[a-zA-Z0-9_]+"
+                                required
+                            />
+                        </div>
+                        {usernameError && (
+                            <p className="mt-1 text-sm text-red-600">
+                                {usernameError}
+                            </p>
+                        )}
                     </div>
 
                     {/* Email Input */}

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 
-const Login = () => {
+const Login = ({ onToggle }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
-        email: '',
+        identifier: '', // will store either username or email
         password: '',
         rememberMe: false
     });
@@ -31,31 +31,30 @@ const Login = () => {
                     <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Welcome back</h2>
                     <p className="mt-2 text-sm text-gray-600">
                         Don't have an account?{' '}
-                        <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+                        <a href="#" onClick={onToggle} className="font-medium text-indigo-600 hover:text-indigo-500">
                             Sign up
                         </a>
                     </p>
                 </div>
 
-                {/* Form */}
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    {/* Email Input */}
+                    {/* Username/Email Input */}
                     <div className="relative">
-                        <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                            Email address
+                        <label htmlFor="identifier" className="text-sm font-medium text-gray-700">
+                            Username or email address
                         </label>
                         <div className="mt-1 relative rounded-md shadow-sm">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Mail className="h-5 w-5 text-gray-400" />
+                                <User className="h-5 w-5 text-gray-400" />
                             </div>
                             <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                value={formData.email}
+                                type="text"
+                                name="identifier"
+                                id="identifier"
+                                value={formData.identifier}
                                 onChange={handleChange}
                                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                placeholder="you@example.com"
+                                placeholder="Username or email"
                                 required
                             />
                         </div>
@@ -105,7 +104,7 @@ const Login = () => {
                                 onChange={handleChange}
                                 className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                             />
-                            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                            <label htmlFor="remember-me" className="ml-1 mr-5 block text-sm text-gray-900">
                                 Remember me
                             </label>
                         </div>
