@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import cookieParser from "cookie-parser";
 import authRoute from "../routes/authRoute.js";
+import dashboardRoutes from "../routes/dashboard.js";
 import { connectDB } from "../config/db.js";
 import cors from "cors";
 
@@ -12,7 +13,7 @@ const app = express();
 // CORS configuration
 app.use(
   cors({
-    origin: "http://localhost:5174", // Your frontend URL
+    origin: ["http://localhost:5173", "http://localhost:5174"], // Your frontend URL
     credentials: true, // Allow credentials
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed methods
     allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
@@ -22,6 +23,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api/auth", authRoute);
+app.use('/api/dashboard', dashboardRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
