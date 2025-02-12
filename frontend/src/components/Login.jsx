@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { authAPI } from '../services/authService.js';
+import { useAuth } from '../services/authContext.jsx';
 
 const Login = ({ onToggle }) => {
+    const { setUser, setLoading, setError } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         identifier: '', // will store either username or email
@@ -9,10 +12,22 @@ const Login = ({ onToggle }) => {
         rememberMe: false
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError(null);
         // Handle form submission
-        console.log('Form submitted:', formData);
+
+        try {
+            const response = await authAPI.login(formData);
+            setUser(response.user);
+            // Redirect to dashboard or home page
+            window.location.href = '/dashboard';
+        } catch (err) {
+            setError(err.message || 'Invalid credentials');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleChange = (e) => {
