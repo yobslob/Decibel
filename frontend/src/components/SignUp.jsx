@@ -3,7 +3,7 @@ import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 import { authAPI } from '../services/authService.js';
 import { useAuth } from '../services/authContext.jsx';
 
-const SignUp = ({ onToggle }) => {
+const SignUp = ({ onToggle,setIsLogin }) => {
     const { setUser, setLoading, setError } = useAuth();
     const [usernameError, setUsernameError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -30,9 +30,10 @@ const SignUp = ({ onToggle }) => {
         try {
             const response = await authAPI.signup(signupData);
             setUser(response.user);
-            window.location.href = '/dashboard';
+            setIsLogin(c=>!c);
         } catch (err) {
             setError(err.message || 'Something went wrong during signup');
+            alert("User already regisetered.")
         } finally {
             setLoading(false);
         }

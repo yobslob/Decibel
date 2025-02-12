@@ -25,6 +25,7 @@ const Login = ({ onToggle }) => {
             window.location.href = '/dashboard';
         } catch (err) {
             setError(err.message || 'Invalid credentials');
+            alert("Invalid credentials.");
         } finally {
             setLoading(false);
         }
@@ -56,7 +57,7 @@ const Login = ({ onToggle }) => {
                     {/* Username/Email Input */}
                     <div className="relative">
                         <label htmlFor="identifier" className="text-sm font-medium text-gray-700">
-                            Username or email address
+                            email address
                         </label>
                         <div className="mt-1 relative rounded-md shadow-sm">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
