@@ -3,7 +3,7 @@ import { generateToken } from "../lib/untils.js";
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 export const signup = async (req, res) => {
-  const { firstName, username, email, password, lastName } = req.body;
+  const { username, fullName, firstName, lastName, email, password } = req.body;
   try {
     if (!firstName || !username || !email || !password) {
       return res.status(400).json({
@@ -20,9 +20,10 @@ export const signup = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const newUser = new User({
+      username,
+      fullName,
       firstName,
       lastName,
-      username,
       email,
       password: hashedPassword,
     });

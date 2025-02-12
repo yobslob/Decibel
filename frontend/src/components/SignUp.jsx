@@ -1,46 +1,79 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { authAPI } from '../services/authService.js';
+import { useAuth } from '../services/authContext.jsx';
 
 const SignUp = ({ onToggle }) => {
-    // Add username validation state
+    const { setUser, setLoading, setError } = useAuth();
     const [usernameError, setUsernameError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         username: '',
         fullName: '',
+        firstName: '', // Added this
+        lastName: '',  // Added this
         email: '',
         password: '',
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission
-        console.log('Form submitted:', formData);
+        setLoading(true);
+        setError(null);
+        // Create a new object with the backend-expected format
+        const signupData = {
+            ...formData,
+            // Remove fullName as it's not needed for backend
+            fullName: formData.firstName + " " + formData.lastName
+        };
+
+        try {
+            const response = await authAPI.signup(signupData);
+            setUser(response.user);
+            window.location.href = '/dashboard';
+        } catch (err) {
+            setError(err.message || 'Something went wrong during signup');
+        } finally {
+            setLoading(false);
+        }
     };
 
-
-
-    // Add validation to handleChange
     const handleChange = (e) => {
-        if (e.target.name === 'username') {
-            // Clear previous error
-            setUsernameError('');
+        const { name, value } = e.target;
 
-            // Basic username validation
-            if (e.target.value.length < 3) {
+        if (name === 'username') {
+            setUsernameError('');
+            if (value.length < 3) {
                 setUsernameError('Username must be at least 3 characters long');
-            } else if (!/^[a-zA-Z0-9_]+$/.test(e.target.value)) {
+            } else if (!/^[a-zA-Z0-9_]+$/.test(value)) {
                 setUsernameError('Username can only contain letters, numbers, and underscores');
             }
         }
 
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+        // Special handling for fullName
+        if (name === 'fullName') {
+            const names = value.trim().split(' ');
+            const firstName = names[0] || '';
+            // Join the rest of the names as lastName
+            const lastName = names.slice(1).join(' ') || '';
+
+            setFormData(prev => ({
+                ...prev,
+                fullName: value,
+                firstName,
+                lastName
+            }));
+        } else {
+            // Handle other form fields normally
+            setFormData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
     };
 
     return (
+
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
                 {/* Header */}
@@ -215,6 +248,7 @@ const SignUp = ({ onToggle }) => {
                 </div>
             </div>
         </div>
+
     );
 };
 
