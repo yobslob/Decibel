@@ -14,7 +14,7 @@ router.get("/feed", protectRoute, async (req, res) => {
         const user = await User.findById(userId);
 
         const posts = await Post.find({
-            user: { $in: [...user.following, userId] }
+            user: { $in: [...user.connection, userId] }
         })
             .populate("user", "username profilePic")
             .sort({ createdAt: -1 })
@@ -23,7 +23,7 @@ router.get("/feed", protectRoute, async (req, res) => {
         // Get suggested users (not followed by current user)
         const suggestedUsers = await User.find({
             _id: {
-                $nin: [...user.following, userId]
+                $nin: [...user.connection, userId]
             }
         })
             .select("username profilePic")
