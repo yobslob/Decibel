@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { authAPI } from '../services/authService.js';
 import { useAuth } from '../services/authContext.jsx';
 
@@ -7,23 +7,35 @@ const Login = ({ onToggle }) => {
     const { setUser, setLoading, setError } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
-        identifier: '', // will store either username or email
+        email: '',     // Changed from identifier to email to match backend
         password: '',
         rememberMe: false
     });
+    const [loginError, setLoginError] = useState(''); // Added for specific error messages
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-        // Handle form submission
+        setLoginError('');
 
         try {
-            const response = await authAPI.login(formData);
-            setUser(response.user);
-            // Redirect to dashboard or home page
+            const response = await authAPI.login({
+                email: formData.email,
+                password: formData.password
+            });
+
+            // Set user with the response data structure matching your backend
+            setUser({
+                _id: response._id,
+                fullName: response.fullName,
+                email: response.email
+            });
+
             window.location.href = '/dashboard';
         } catch (err) {
+            setLoginError(err.msg || 'Invalid email or password');
+            setError(err.msg || 'Login failed');
             setError(err.message || 'Invalid credentials');
             alert("Invalid credentials.");
         } finally {
@@ -54,23 +66,32 @@ const Login = ({ onToggle }) => {
                 </div>
 
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    {/* Username/Email Input */}
+                    {/* Show error message if exists */}
+                    {loginError && (
+                        <div className="text-red-500 text-sm text-center bg-red-50 p-2 rounded">
+                            {loginError}
+                        </div>
+                    )}
+
+                    {/* Email Input */}
                     <div className="relative">
+                        <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                            Email address
                         <label htmlFor="identifier" className="text-sm font-medium text-gray-700">
                             email address
                         </label>
                         <div className="mt-1 relative rounded-md shadow-sm">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <User className="h-5 w-5 text-gray-400" />
+                                <Mail className="h-5 w-5 text-gray-400" />
                             </div>
                             <input
-                                type="text"
-                                name="identifier"
-                                id="identifier"
-                                value={formData.identifier}
+                                type="email"
+                                name="email"
+                                id="email"
+                                value={formData.email}
                                 onChange={handleChange}
                                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                placeholder="Username or email"
+                                placeholder="you@example.com"
                                 required
                             />
                         </div>
