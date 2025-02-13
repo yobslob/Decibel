@@ -57,6 +57,54 @@ router.post("/posts", protectRoute, async (req, res) => {
     }
 });
 
+// Get explore page posts (all posts sorted by likes)
+router.get("/posts/explore", protectRoute, async (req, res) => {
+    try {
+        const posts = await Post.find()
+            .populate("user", "username profilePic")
+            .sort({ likes: -1 })
+            .limit(30); // Limiting to 30 posts initially for performance
+
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error("Error in explore feed: ", error.message);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+// Search users
+router.get("/users/search", protectRoute, async (req, res) => {
+    try {
+        const { q } = req.query;
+
+        console.log("Search query received:", q); // Debug log
+        console.log("User making request:", req.user._id); // Debug log
+
+        if (!q) {
+            return res.status(400).json({ message: "Search query is required" });
+        }
+
+        const users = await User.find({
+            $or: [
+                { username: { $regex: q, $options: 'i' } },
+                { firstName: { $regex: q, $options: 'i' } },
+                { lastName: { $regex: q, $options: 'i' } }
+            ]
+        })
+            .select('username firstName lastName profilePic currentAura')
+            .limit(10);
+
+        console.log("Search results:", users.length); // Debug log
+        res.json(users);
+    } catch (error) {
+        console.error("Search error details:", {
+            message: error.message,
+            stack: error.stack
+        });
+        res.status(500).json({ error: "Server error in search" });
+    }
+});
+
 // Like/Unlike post
 router.put("/posts/:id/like", protectRoute, async (req, res) => {
     try {
