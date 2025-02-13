@@ -5,6 +5,8 @@ import LeftSidebar from './leftSidebar';
 import MainContent from './MainContent';
 import RightSidebar from './RightSidebar';
 
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+
 const Dashboard = () => {
     const navigate = useNavigate();
     const [posts, setPosts] = useState([]);
@@ -17,10 +19,13 @@ const Dashboard = () => {
             try {
                 setLoading(true);
                 const { data } = await axios.get("/api/dashboard/feed");
+                console.log(data);
                 setPosts(data.posts);
                 setSuggestedUsers(data.suggestedUsers);
             } catch (error) {
-                console.error("Error fetching dashboard data:", error);
+                console.error("Full error:", error);
+                console.error("Error response:", error.response);
+                console.error("Error data:", error.response?.data);
                 setError(error.message);
                 if (error.response?.status === 401) {
                     navigate("/login");

@@ -71,7 +71,7 @@ const HomePage = () => {
                             {isLogin ? (
                                 <Login onToggle={toggleForm} />
                             ) : (
-                                <SignUp onToggle={toggleForm} />
+                                <SignUp onToggle={toggleForm} setIsLogin={setIsLogin} />
                             )}
                         </div>
                     </div>
