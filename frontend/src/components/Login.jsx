@@ -36,8 +36,6 @@ const Login = ({ onToggle }) => {
         } catch (err) {
             setLoginError(err.msg || 'Invalid email or password');
             setError(err.msg || 'Login failed');
-            setError(err.message || 'Invalid credentials');
-            alert("Invalid credentials.");
         } finally {
             setLoading(false);
         }
@@ -77,8 +75,6 @@ const Login = ({ onToggle }) => {
                     <div className="relative">
                         <label htmlFor="email" className="text-sm font-medium text-gray-700">
                             Email address
-                        <label htmlFor="identifier" className="text-sm font-medium text-gray-700">
-                            email address
                         </label>
                         <div className="mt-1 relative rounded-md shadow-sm">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
