@@ -17,7 +17,7 @@ const LeftSidebar = () => {
     const currentPath = location.pathname;
 
     const menuItems = [
-        { icon: <Home size={24} />, label: 'Home', path: '/' },
+        { icon: <Home size={24} />, label: 'Home', path: '/dashboard' },
         { icon: <Search size={24} />, label: 'Search', path: '/search' },
         { icon: <Compass size={24} />, label: 'Explore', path: '/explore' },
         { icon: <Store size={24} />, label: 'Store', path: '/store' },
